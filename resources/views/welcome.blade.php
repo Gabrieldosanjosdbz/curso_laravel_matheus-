@@ -1,65 +1,45 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('layouts.main')
 
-        <title>Laravel</title>
+@section('title', 'HDC Events')
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+@section('content')
 
-        <!-- Styles -->
-        <style>
+<div id="search-container" class="col-md-12">
+    <h1>Busque um evento</h1>
+    <form action="/" method="GET">
+        <input type="text" id="search" name="search" class="form-control" placeholder="Procurar...">
+    </form>
+</div>
+<div id="events-container" class="col-md-12">
+
+    @if($search)
+        <h2>Buscando por: {{ $search }}</h2>
+    @else
+        <h2>Próximos Eventos</h2>
+        <p class="subtitle">Veja os eventos dos próximos dias</p>
+    @endif
+
+    <div id="cards-container" class="row">
+        @foreach($events as $event)
+
+        <div class="card col-md-3">
+            <img src="/img/events/{{ $event->image }}" alt="{{ $event->title }}">
+
+            <div class="card-body">
+                <p class="card-date">{{ date('d/m/y', strtotime( $event->date )) }}</p>
+                <h5 class="card-title">{{ $event->title }}</h5>
+                <p class="card-participants">{{ count($event->users) }} participantes</p>
+                <a href="events/{{ $event->id }}" class="btn btn-primary yes">Saber mais</a>
+            </div>
             
-        </style>
-    </head>
-    <body>
-        <h1>Algum comentario</h1>    
-
-        {{-- Diretiva if, elseif e else --}}
-        @if(10 > 5) <!--Abrindo a diretiva-->
-            <p>A condição é true</p>
-        @endif <!--Fechando a diretiva -->
-
-        <p>{{ $nome }}</p> 
-
-        @if($nome == "kay")
-            <p>O nome é kay</p>
-        @elseif($nome == "Gabriel")
-            <p>Seu nome é {{ $nome }} e você tem {{ $idade }} anos</p>
-        @else
-            <p>Seu nome é estranho</p>
-        @endif
-
-
-        {{-- Diretiva for --}}
-        @for($i = 0; $i < count($array); $i++)
-
-            <p> {{ $i }} - {{ $array[$i] }}</p>
-            @if($i == 2)
-                <p> o índice {{$i}} é {{$array[$i]}}</p>
-            @endif
-
-        @endfor
-
-        {{-- Diretiva foreach --}}
-        @foreach($nomes as $nome)
-
-        <p>{{ $nome }}</p>
-        <p>{{ $loop->index }}</p>   {{-- O $loop é uma variavel do blade para acessar os index dos arrays --}}
-
+        </div>
         @endforeach
+        @if(count($events) == 0 && $search)
+            <p>Não foi possível encontrar nenhum evento com {{ $search }}! <a href="/">Ver todos</a></p>
+        @elseif(count($events) == 0)
+            <p>Não há eventos disponiveis</p>
+        @endif
+    </div>
+</div>
 
-        {{-- Diretiva php --}}
-        @php
-            $name2 = "gabriel";
-            echo $name2;
-        @endphp
-
-        <!-- Comentario do HTML -->
-        {{-- Este é um comentario do blade nao renderizavel --}}
-
-    </body>
-</html>
+@endsection
